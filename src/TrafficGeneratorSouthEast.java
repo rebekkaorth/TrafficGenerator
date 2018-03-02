@@ -1,15 +1,15 @@
-
-
 import java.util.ArrayList;
 import java.util.Random;
 
 public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
 
+    private boolean exit;
     private int printDelay;
     private String format;
     private Grid grid;
     private int[] rowsToDrawIn;
     private int[] columnsToDrawIn;
+    private Report generatorReport;
 
 
     public TrafficGeneratorSouthEast(int printDelay, Grid grid, int[] rowsToDrawIn, int[] columnsToDrawIn) {
@@ -18,6 +18,8 @@ public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
         this.grid = grid;
         this.rowsToDrawIn = rowsToDrawIn;
         this.columnsToDrawIn = columnsToDrawIn;
+        this.generatorReport = new Report("TrafficGeneratorSouthEast");
+        this.exit = false;
     }
 
     public Vehicle newVehicle() {
@@ -35,7 +37,7 @@ public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
     }
 
     public int randomSpeed(){
-        return (int) (Math.random() * (300 - this.printDelay)) + this.printDelay; //limit of delay/ speed of cars?
+        return (int) (Math.random() * (800 - this.printDelay)) + this.printDelay; //limit of delay/ speed of cars?
     }
 
     public int startingPositionX(String format) {
@@ -56,6 +58,7 @@ public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
 
     public void buildTraffic() {
         Vehicle newVehicle = newVehicle();
+        generatorReport.addVehicleSpeedToReport(newVehicle.getSpeed());
         if(format.equals("south")) {
             MoveVehicleSouth moveVehicleSouth = new MoveVehicleSouth(grid, newVehicle);
             Thread nVehicleThread = new Thread(moveVehicleSouth);
@@ -67,9 +70,13 @@ public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
         }
     }
 
+    public Report getReport() {
+        return generatorReport;
+    }
+
     @Override
     public void run() {
-        for(;;) {
+        while(!exit) {
             try {
                 Thread.sleep(printDelay);
             } catch (InterruptedException e) {
@@ -79,36 +86,22 @@ public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
         }
     }
 
-    /*public static void main (String[] args) {
-        Grid grid = new Grid(10, 20);
-        TrafficGeneratorNorthWest trafficGen = new TrafficGeneratorNorthWest(20, grid); //needs fixing
-        Thread trafficGenThread = new Thread(trafficGen);
-        trafficGenThread.start();
-    }*/
-
-
+    public void stop(){
+        exit = true;
+    }
 
     //MAIN METHODS FOR TESTING
 
-    //MAIN + BUILD TRAFFIC - 2 CARS
+    //MAIN + BUILD TRAFFIC - 1 CARS
 
-    /*public static void main (String[] args) {
-        TrafficGeneratorNorthWest trafficGen = new TrafficGeneratorNorthWest(2000); //needs fixing
-        trafficGen.buildTraffic();
-    }*/
-
-    /*public void buildTraffic() {
+    public static void main (String[] args) {
         Grid grid = new Grid(10, 20);
         PrintGrid printGrid = new PrintGrid(grid, 2000, 20);
         Thread gridThread = new Thread(printGrid);
         gridThread.start();
-        Vehicle nVehicle = new Vehicle("-", 200, 0, 5);
-        MoveVehicle moveVehicleNorth = new MoveVehicle(grid, nVehicle);
-        Thread nVehicleThread = new Thread(moveVehicleNorth);
-        nVehicleThread.start();
-        Vehicle wVehicle = new Vehicle("o", 200,5, 0);
-        MoveVehicle moveVehicleWest = new MoveVehicle(grid, wVehicle);
-        Thread wVehicleThread = new Thread(moveVehicleWest);
-        wVehicleThread.start();
-    }*/
+        int[] r = {0, 9};
+        int[] c = {0, 19};
+        TrafficGeneratorSouthEast trafficGen = new TrafficGeneratorSouthEast(2000, grid, r, c);
+        trafficGen.buildTraffic();
+    }
 }

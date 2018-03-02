@@ -55,7 +55,7 @@ public class PrintGrid implements Runnable {
 
     //MAIN METHOD FOR TESTING
     /*public static void main (String [] args){
-        Thread thread = new Thread(new PrintGrid(new Grid(10,20),2000, 20));
+        Thread thread = new Thread(new PrintGrid(new Grid(10,20),20, 20));
         thread.start();
     }*/
 }

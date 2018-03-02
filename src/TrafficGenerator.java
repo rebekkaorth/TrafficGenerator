@@ -20,5 +20,9 @@ interface TrafficGenerator {
     int startingPositionX (String format);
 
     int startingPositionY(String format);
+
+    Report getReport();
+
+    void stop();
 }
 

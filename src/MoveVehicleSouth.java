@@ -29,7 +29,6 @@ public class MoveVehicleSouth implements MoveVehicle, Runnable {
                 e.printStackTrace();
             }
             currentGrid.enterPosition(vehicle.getPositionX(), vehicle.getPositionY(), this.setForm());
-            //REFACTOR
             if(vehicle.getPositionX() < direction()-1) {
                 currentGrid.leavePosition(vehicle.getPositionX() + 1, vehicle.getPositionY());
             }
