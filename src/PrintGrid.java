@@ -1,12 +1,25 @@
-
+/**
+ * prints the grid to the console
+ */
 
 public class PrintGrid implements Runnable {
 
+    /**
+     * fields of the PrintGrid class
+     */
     private Grid gridToPrint;
     private int gridDrawCount;
     private int maxNumDraw;
     private int delay;
 
+    /**
+     * constructor of the PrintGrid class
+     * gets the grid it prints, the maximum number of draws and the delay of it print outs
+     * it sets the count of grids printed to 0
+     * @param gridToPrint
+     * @param maxNumDraw
+     * @param delay
+     */
     public PrintGrid(Grid gridToPrint, int maxNumDraw, int delay) {
         this.gridToPrint = gridToPrint;
         this.maxNumDraw = maxNumDraw;
@@ -14,10 +27,17 @@ public class PrintGrid implements Runnable {
         this.delay = delay;
     }
 
+    /**
+     * increases the number of times the grid was drawn
+     */
     private void incrementGridDrawCount() {
         this.gridDrawCount++;
     }
 
+    /**
+     * creates a formatted string of the grid
+     * @return gridPrint.toString()
+     */
     public String printGrid () {
         //printing the grid to the console
         StringBuilder gridPrint = new StringBuilder();
@@ -39,6 +59,9 @@ public class PrintGrid implements Runnable {
         return gridPrint.toString();
     }
 
+    /**
+     * prints the formatted grid to the console
+     */
     @Override
     public void run() {
         while(gridDrawCount < maxNumDraw) {

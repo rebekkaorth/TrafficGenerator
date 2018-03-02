@@ -1,8 +1,15 @@
+/**
+ * traffic generator for vehicles that either drive form south to north or from east to west
+ */
+
 import java.util.ArrayList;
 import java.util.Random;
 
 public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
 
+    /**
+     * fields of the TrafficGeneratorSouthEast class
+     */
     private boolean exit;
     private int printDelay;
     private String format;
@@ -12,6 +19,13 @@ public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
     private Report generatorReport;
 
 
+    /**
+     * constructor of the TrafficGeneratorNorthWest class
+     * @param printDelay
+     * @param grid
+     * @param rowsToDrawIn
+     * @param columnsToDrawIn
+     */
     public TrafficGeneratorSouthEast(int printDelay, Grid grid, int[] rowsToDrawIn, int[] columnsToDrawIn) {
         this.printDelay = printDelay;
         this.format = " ";
@@ -22,11 +36,19 @@ public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
         this.exit = false;
     }
 
+    /**
+     * returns a new vehicle object
+     * @return new Vehicle
+     */
     public Vehicle newVehicle() {
-        return new Vehicle(randomFormat(), randomSpeed(), startingPositionX(format), startingPositionY(format));
+        return new Vehicle(randomDirection(), randomSpeed(), startingPositionX(format), startingPositionY(format));
     }
 
-    public String randomFormat() {
+    /**
+     * returns the direction of the vehicle - either north or west
+     * @return formatResult
+     */
+    public String randomDirection() {
         String formatResult;
         ArrayList<String> formats = new ArrayList<>();
         formats.add("south");
@@ -36,10 +58,22 @@ public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
         return formatResult;
     }
 
+    /**
+     * returns the random speed of the vehicle - speed can be between 800ms and the print delay of the traffic
+     * generator
+     * @return speed
+     */
     public int randomSpeed(){
         return (int) (Math.random() * (800 - this.printDelay)) + this.printDelay; //limit of delay/ speed of cars?
     }
 
+    /**
+     * returns a random starting position in the first dimension of the grid
+     * when the direction is east: the starting position is between 0 and the height of the grid
+     * when the direction is south: the starting position is 0
+     * @param format
+     * @return startingPositionX
+     */
     public int startingPositionX(String format) {
         if(format.equals("east")) {
             return (int) (Math.random() * (this.rowsToDrawIn[1]-this.rowsToDrawIn[0]) + this.rowsToDrawIn[0]);
@@ -48,6 +82,13 @@ public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
         }
     }
 
+    /**
+     * returns a random starting position in the second dimension of the gird
+     * when the direction is south: the starting position is between 0 and the width of the grid
+     * when direction is east: the starting position is 0
+     * @param format
+     * @return startingPositionY
+     */
     public int startingPositionY(String format) {
         if (format.equals("south")) {
             return (int) (Math.random() * (this.columnsToDrawIn[1]-this.columnsToDrawIn[0])+ this.columnsToDrawIn[0]);
@@ -56,6 +97,10 @@ public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
         }
     }
 
+    /**
+     * builds new vehicles and gives them to MoveVehicle objects depending on the direction of the vehicle
+     * creates new threads for each vehicle
+     */
     public void buildTraffic() {
         Vehicle newVehicle = newVehicle();
         generatorReport.addVehicleSpeedToReport(newVehicle.getSpeed());
@@ -70,10 +115,17 @@ public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
         }
     }
 
+    /**
+     * returns the report of the traffic generator
+     * @return generatorReport
+     */
     public Report getReport() {
         return generatorReport;
     }
 
+    /**
+     * builds traffic after printDelay has past
+     */
     @Override
     public void run() {
         while(!exit) {
@@ -86,6 +138,9 @@ public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
         }
     }
 
+    /**
+     * sets the boolean exit to true to stop thread
+     */
     public void stop(){
         exit = true;
     }
@@ -94,14 +149,36 @@ public class TrafficGeneratorSouthEast implements TrafficGenerator, Runnable{
 
     //MAIN + BUILD TRAFFIC - 1 CARS
 
-    public static void main (String[] args) {
+    /*public static void main (String[] args) {
         Grid grid = new Grid(10, 20);
         PrintGrid printGrid = new PrintGrid(grid, 2000, 20);
         Thread gridThread = new Thread(printGrid);
         gridThread.start();
         int[] r = {0, 9};
         int[] c = {0, 19};
-        TrafficGeneratorSouthEast trafficGen = new TrafficGeneratorSouthEast(2000, grid, r, c);
+        TrafficGeneratorSouthEast trafficGen = new TrafficGeneratorSouthEast(200, grid, r, c);
+        trafficGen.buildTraffic();
+    }*/
+
+    /*public static void main (String[] args) {
+        Grid grid = new Grid(10, 20);
+        PrintGrid printGrid = new PrintGrid(grid, 2000, 20);
+        Thread gridThread = new Thread(printGrid);
+        gridThread.start();
+        int[] r = {0, 9};
+        int[] c = {0, 19};
+        TrafficGeneratorSouthEast trafficGen = new TrafficGeneratorSouthEast(200, grid, r, c);
         trafficGen.buildTraffic();
     }
+
+    public void buildTraffic() {
+        Vehicle newVehicleOne = new Vehicle("south", 200, 9, 15);
+        Vehicle newVehicleTwo = new Vehicle("east", 200, 5, 19);
+        MoveVehicleSouth moveVehicleSouth = new MoveVehicleSouth(grid, newVehicleOne);
+        Thread nVehicleThread = new Thread(moveVehicleSouth);
+        nVehicleThread.start();
+        MoveVehicleEast moveVehicleEast = new MoveVehicleEast(grid, newVehicleTwo);
+        Thread wVehicleThread = new Thread(moveVehicleEast);
+        wVehicleThread.start();
+    }*/
 }
